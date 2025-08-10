@@ -1,0 +1,94 @@
+Table users [note: 'Пользователи'] {
+  id int [pk, note: 'ИД']
+  name varchar(255) [note: 'Имя']
+  surname varchar(255) [note: 'Фамилия']
+  email varchar(255) [note: 'Email', unique]
+  avatarId int [note: 'ИД аватара', ref: > file_images.id, null]
+  description text [note: 'Описание профиля', null]
+  passwordHash varchar(255) [note: 'Хэш пароля']
+  createTime datetime [note: 'Создан']
+  updateTime datetime [note: 'Обновлен']
+}
+
+Table posts [note: 'Посты'] {
+  id int [pk, note: 'ИД']
+  authorId int [note: 'ИД автора', ref: > users.id]
+  title varchar(255) [note: 'Заголовок']
+  body text [note: 'Текст поста']
+  imageId int [note: 'ИД изображения поста', ref: > file_images.id, null]
+  createTime datetime [note: 'Создан']
+  updateTime datetime [note: 'Обновлен']
+}
+
+Table tags [note: 'Тэги'] {
+  id int [pk, note: 'ИД']
+  title varchar(255) [note: 'Название', unique]
+}
+
+Table post_tags [note: 'Тэги для постов'] {
+  id int [pk, note: 'ИД']
+  postId int [note: 'ИД поста', ref: > posts.id]
+  tagId int [note: 'ИД тега', ref: > tags.id]
+  indexes {
+    (postId, tagId) [unique]
+  }
+}
+
+Table likes [note: 'Лайки'] {
+  id int [pk, note: 'ИД']
+  postId int [note: 'ИД поста', ref: > posts.id]
+  userId int [note: 'ИД пользователя', ref: > users.id]
+  createTime datetime [note: 'Дата лайка']
+  indexes {
+    (postId, userId) [unique]
+  }
+}
+
+Table comments [note: 'Комментарии'] {
+  id int [pk, note: 'ИД']
+  postId int [note: 'ИД поста', ref: > posts.id]
+  userId int [note: 'ИД пользователя', ref: > users.id]
+  parentCommentId int [note: 'ИД родительского комментария', ref: > comments.id, null]
+  text text [note: 'Комментарий']
+  status varchar(50) [note: 'Статус комментария']
+  createTime datetime [note: 'Создан']
+  updateTime datetime [note: 'Обновлен']
+}
+
+
+Table feeds [note: 'Подписки'] {
+  id int [pk, note: 'ИД']
+  followerId int [note: 'ИД пользователя', ref: > users.id]
+  followedId int [note: 'ИД подписчика', ref: > users.id]
+  createTime datetime [note: 'Дата лайка']
+  indexes {
+    (followerId, followedId) [unique]
+  }
+}
+
+Table files [note: 'Файлы'] {
+  id int [pk, note: 'ИД']
+  uid varchar(255) [note: 'Уникальный UUID']
+  title varchar(255) [note: 'Название файла']
+  storageName varchar(255) [note: 'Название хранилища']
+  fileName varchar(255) [note: 'Сохраненное имя файла']
+  fileSize int [note: 'Размер файла (байты)']
+  fileMimeType varchar(100) [note: 'MIME тип файла']
+  folder varchar(255) [note: 'Папка']
+  createTime datetime [note: 'Создан']
+}
+
+Table file_images [note: 'Изображения'] {
+  id int [pk, note: 'ИД']
+  previewName varchar(255) [note: 'Имя превью']
+  isOriginal bool [note: 'Оригинал или нет']
+  storageName varchar(255)
+  fileName varchar(255)
+  fileSize int
+  fileMimeType varchar(100)
+  folder varchar(255)
+  width int
+  height int
+  createTime datetime [note: 'Создан']
+  fileId int [note: 'ИД файла', ref: > files.id]
+}
