@@ -1,11 +1,13 @@
 Table users [note: 'Пользователи'] {
   id int [pk, note: 'ИД']
   name varchar(255) [note: 'Имя']
+  nickname varchar(255) [note: 'Никнейм', unique]
   surname varchar(255) [note: 'Фамилия']
   email varchar(255) [note: 'Email', unique]
   avatarId int [note: 'ИД аватара', ref: > file_images.id, null]
   description text [note: 'Описание профиля', null]
   passwordHash varchar(255) [note: 'Хэш пароля']
+  isArchive bool [note: Удален?]
   createTime datetime [note: 'Создан']
   updateTime datetime [note: 'Обновлен']
 }
