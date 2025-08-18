@@ -1,0 +1,16 @@
+import { Prisma } from '@prisma/client';
+import { SearchResultDto } from 'base/domain/dtos/search-result.dto';
+import { UserModel } from '../models/user.model';
+
+export interface IUserRepository {
+  searchWithQuery(
+    where: Prisma.UserWhereInput,
+    page: number,
+    limit: number,
+  ): Promise<SearchResultDto<UserModel>>;
+  create(data: Prisma.UserCreateInput): Promise<UserModel>;
+  findById(id: number, isArchive?: boolean): Promise<UserModel | null>;
+  findByEmail(email: string): Promise<UserModel | null>;
+  findByNickname(nickname: string): Promise<UserModel | null>;
+  update(id: number, data: Prisma.UserUpdateInput): Promise<UserModel | null>;
+}
