@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -53,7 +54,7 @@ export class UserController {
   @ApiResponse({
     type: UserModel,
   })
-  getUserById(@Param('id') id: number): Promise<UserModel> {
+  getUserById(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
     return this.userService.getUserById(id);
   }
 
@@ -64,7 +65,7 @@ export class UserController {
     type: UserModel,
   })
   updateUser(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateUserDto,
   ): Promise<UserModel> {
     return this.userService.updateUser(id, dto);
@@ -76,7 +77,7 @@ export class UserController {
   @ApiResponse({
     type: UserModel,
   })
-  archiveUserById(@Param('id') id: number): Promise<UserModel> {
+  archiveUserById(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
     return this.userService.archiveUser(id);
   }
 
@@ -86,7 +87,7 @@ export class UserController {
   @ApiResponse({
     type: UserModel,
   })
-  restoreUserById(@Param('id') id: number): Promise<UserModel> {
+  restoreUserById(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
     return this.userService.restoreUser(id);
   }
 }

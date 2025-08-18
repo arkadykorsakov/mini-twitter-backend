@@ -11,12 +11,12 @@ export class SearchWithQueryDto {
   @IsNumber()
   @Min(1)
   @Type(() => Number)
-  limit: number;
+  limit: number = 10;
 
   @ApiPropertyOptional({ example: 1, description: 'Номер страницы' })
   @IsOptional()
   @IsNumber()
   @Min(1)
   @Type(() => Number)
-  page: number;
+  page: number = 1;
 }

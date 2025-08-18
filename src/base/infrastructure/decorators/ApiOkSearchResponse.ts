@@ -15,10 +15,15 @@ export function ApiOkSearchResponse(options: ApiOkSearchResponseOptions) {
         allOf: [
           { $ref: getSchemaPath(SearchResultDto) },
           {
+            type: 'object',
             properties: {
               items: {
                 type: 'array',
                 items: { $ref: getSchemaPath(itemType) },
+              },
+              total: {
+                type: 'number',
+                default: 1,
               },
             },
           },
