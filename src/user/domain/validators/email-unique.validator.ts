@@ -11,6 +11,7 @@ export class EmailUniqueValidator implements ValidatorConstraintInterface {
   constructor(protected readonly userRepository: UserRepository) {}
 
   async validate(email: string) {
+    if (!email) return true;
     const user = await this.userRepository.findByEmail(email);
     return !user;
   }
