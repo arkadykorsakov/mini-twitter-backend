@@ -11,6 +11,7 @@ export class NicknameUniqueValidator implements ValidatorConstraintInterface {
   constructor(protected readonly userRepository: UserRepository) {}
 
   async validate(nickname: string) {
+    if (!nickname) return true;
     const user = await this.userRepository.findByNickname(nickname);
     return !user;
   }

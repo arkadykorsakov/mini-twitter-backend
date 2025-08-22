@@ -4,11 +4,10 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { UserSearchQueryDto } from '../dtos/user-search-query.dto';
 import { hash } from 'argon2';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { IUserService } from '../interfaces/IUserService';
 import { SearchResultDto } from 'base/domain/dtos/search-result.dto';
 import { UserModel } from '../models/user.model';
-import { ValidationException } from 'base/domain/exceptions/ValidationException';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -60,6 +59,16 @@ export class UserService implements IUserService {
     const user = await this.userRepository.findById(id);
     if (!user) throw new NotFoundException('Пользователь не найден');
     return user;
+  }
+
+  async getUserByEmail(email: string): Promise<UserModel> {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) throw new NotFoundException('Пользователь не найден');
+    return user;
+  }
+
+  async getUserWithPasswordByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findByEmailWithoutPassword(email);
   }
 
   async updateUser(id: number, dto: UpdateUserDto): Promise<UserModel> {

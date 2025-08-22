@@ -1,5 +1,6 @@
 import {
   IsEmail,
+  IsNotEmpty,
   IsOptional,
   IsString,
   Validate,
@@ -14,6 +15,7 @@ export class CreateUserDto {
     example: 'user@example.com',
     description: 'Email пользователя',
   })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.IS_NOT_EMPTY })
   @IsString({ message: VALIDATION_MESSAGES.IS_STRING })
   @IsEmail({}, { message: VALIDATION_MESSAGES.IS_EMAIL })
   @Validate(EmailUniqueValidator)
@@ -23,14 +25,17 @@ export class CreateUserDto {
     example: 'strongPassword123',
     description: 'Пароль пользователя',
   })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.IS_NOT_EMPTY })
   @IsString({ message: VALIDATION_MESSAGES.IS_STRING })
   password: string;
 
   @ApiProperty({ example: 'Иван', description: 'Имя пользователя' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.IS_NOT_EMPTY })
   @IsString({ message: VALIDATION_MESSAGES.IS_STRING })
   name: string;
 
   @ApiProperty({ example: 'Иванов', description: 'Фамилия пользователя' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.IS_NOT_EMPTY })
   @IsString({ message: VALIDATION_MESSAGES.IS_STRING })
   surname: string;
 
@@ -38,6 +43,7 @@ export class CreateUserDto {
     example: 'ivan_the_best',
     description: 'Никнейм пользователя',
   })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.IS_NOT_EMPTY })
   @IsString({ message: VALIDATION_MESSAGES.IS_STRING })
   @Validate(NicknameUniqueValidator)
   nickname: string;

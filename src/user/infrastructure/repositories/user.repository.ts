@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../base/services/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { IUserRepository } from '../../domain/interfaces/IUserRepository';
 import { SearchResultDto } from 'base/domain/dtos/search-result.dto';
 import { UserModel } from '../../domain/models/user.model';
@@ -56,6 +56,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async findByNickname(nickname: string): Promise<UserModel | null> {
+    console.log(nickname);
     return this.prisma.user.findUnique({
       where: { nickname },
       omit: {
@@ -88,5 +89,13 @@ export class UserRepository implements IUserRepository {
     } catch {
       return null;
     }
+  }
+
+  findByEmailWithoutPassword(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
   }
 }
