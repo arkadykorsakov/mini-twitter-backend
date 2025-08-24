@@ -21,8 +21,6 @@ import { Request, Response } from 'express';
 import { CookieService } from '../../domain/services/cookie.service';
 import { AuthLoginModel } from '../../domain/models/auth-login.model';
 import { Auth } from '../decorators/auth.decorator';
-import { CurrentUserDecorator } from '../../../user/infrastructure/decorators/current-user.decorator';
-import { UserModel } from '../../../user/domain/models/user.model';
 
 @ApiTags('Авторизация')
 @Controller('auth')

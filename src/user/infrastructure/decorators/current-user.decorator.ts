@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 import { UserModel } from '../../domain/models/user.model';
 
-export const CurrentUserDecorator = createParamDecorator(
+export const CurrentUser = createParamDecorator(
   (data: keyof UserModel | undefined, ctx: ExecutionContext) => {
     const request = ctx
       .switchToHttp()

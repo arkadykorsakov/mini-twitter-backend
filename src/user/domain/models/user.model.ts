@@ -41,4 +41,12 @@ export class UserModel implements Omit<User, 'passwordHash'> {
     default: false,
   })
   isArchive: boolean;
+
+  @ApiProperty({
+    description: 'ID аватара',
+    required: false,
+    nullable: true,
+    type: 'number',
+  })
+  avatarId: number | null;
 }

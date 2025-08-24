@@ -5,8 +5,11 @@ import { PrismaService } from '../../base/services/prisma.service';
 import { UserRepository } from './repositories/user.repository';
 import { EmailUniqueValidator } from '../domain/validators/email-unique.validator';
 import { NicknameUniqueValidator } from '../domain/validators/nickname-unique.validator';
+import { FileModule } from '../../file/infrastructure/file.module';
+import { ExistAvatarIdValidator } from '../domain/validators/exist-avatar-id';
 
 @Module({
+  imports: [FileModule],
   controllers: [UserController],
   providers: [
     UserService,
@@ -14,6 +17,7 @@ import { NicknameUniqueValidator } from '../domain/validators/nickname-unique.va
     UserRepository,
     EmailUniqueValidator,
     NicknameUniqueValidator,
+    ExistAvatarIdValidator,
   ],
 })
 export class UserModule {}

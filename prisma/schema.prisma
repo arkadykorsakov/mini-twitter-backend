@@ -29,5 +29,25 @@ model User {
   updateTime DateTime @updatedAt
   isArchive  Boolean  @default(false)
 
+  // avatar
+  avatarId Int?
+  avatar   File? @relation(fields: [avatarId], references: [id])
+
   @@map("users")
+}
+
+model File {
+  id           Int      @id @default(autoincrement())
+  uid          String   @unique
+  title        String
+  storageName  String
+  fileName     String
+  fileSize     Int
+  fileMimeType String
+  folder       String
+  createTime   DateTime @default(now())
+
+  usersAvatar User[]
+
+  @@map("files")
 }

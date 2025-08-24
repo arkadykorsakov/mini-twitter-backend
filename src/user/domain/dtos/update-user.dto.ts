@@ -1,7 +1,13 @@
-import { IsNotEmpty, IsOptional, IsString, Validate } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Validate,
+} from 'class-validator';
 import { VALIDATION_MESSAGES } from 'base/constants/validationMessages';
-import { NicknameUniqueValidator } from '../validators/nickname-unique.validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ExistAvatarIdValidator } from '../validators/exist-avatar-id';
 
 export class UpdateUserDto {
   @ApiProperty({ example: 'Иван', description: 'Имя пользователя' })
@@ -19,7 +25,6 @@ export class UpdateUserDto {
     description: 'Никнейм пользователя',
   })
   @IsNotEmpty({ message: VALIDATION_MESSAGES.IS_NOT_EMPTY })
-  @Validate(NicknameUniqueValidator)
   @IsString({ message: VALIDATION_MESSAGES.IS_STRING })
   nickname: string;
 
@@ -31,4 +36,14 @@ export class UpdateUserDto {
   @IsString({ message: VALIDATION_MESSAGES.IS_STRING })
   @IsOptional()
   description: string;
+
+  @ApiPropertyOptional({
+    example: 1,
+    description: 'ID аватара пользователя',
+    required: false,
+  })
+  @IsNumber()
+  @IsOptional()
+  @Validate(ExistAvatarIdValidator)
+  avatarId: number;
 }

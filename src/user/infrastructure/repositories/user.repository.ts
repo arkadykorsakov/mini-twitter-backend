@@ -40,14 +40,12 @@ export class UserRepository implements IUserRepository {
 
   async findByEmail(
     email: string,
-    currentUserId?: number,
+    excludeId?: number,
   ): Promise<UserModel | null> {
-    return this.prisma.user.findUnique({
+    return this.prisma.user.findFirst({
       where: {
         email,
-        NOT: {
-          id: currentUserId,
-        },
+        NOT: excludeId ? { id: excludeId } : undefined,
       },
       omit: {
         passwordHash: true,
@@ -55,10 +53,15 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async findByNickname(nickname: string): Promise<UserModel | null> {
-    console.log(nickname);
-    return this.prisma.user.findUnique({
-      where: { nickname },
+  async findByNickname(
+    nickname: string,
+    excludeId?: number,
+  ): Promise<UserModel | null> {
+    return this.prisma.user.findFirst({
+      where: {
+        nickname,
+        NOT: excludeId ? { id: excludeId } : undefined,
+      },
       omit: {
         passwordHash: true,
       },
