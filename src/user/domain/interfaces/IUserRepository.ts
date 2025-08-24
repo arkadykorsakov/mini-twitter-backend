@@ -10,8 +10,11 @@ export interface IUserRepository {
   ): Promise<SearchResultDto<UserModel>>;
   create(data: Prisma.UserCreateInput): Promise<UserModel>;
   findById(id: number, isArchive?: boolean): Promise<UserModel | null>;
-  findByEmail(email: string): Promise<UserModel | null>;
-  findByNickname(nickname: string): Promise<UserModel | null>;
+  findByEmail(email: string, excludeId?: number): Promise<UserModel | null>;
+  findByNickname(
+    nickname: string,
+    excludeId?: number,
+  ): Promise<UserModel | null>;
   update(id: number, data: Prisma.UserUpdateInput): Promise<UserModel | null>;
   findByEmailWithoutPassword(email: string): Promise<User | null>;
 }

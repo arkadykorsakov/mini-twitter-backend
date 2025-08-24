@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRepository } from '../../infrastructure/repositories/user.repository';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
@@ -8,6 +12,7 @@ import { Prisma, User } from '@prisma/client';
 import { IUserService } from '../interfaces/IUserService';
 import { SearchResultDto } from 'base/domain/dtos/search-result.dto';
 import { UserModel } from '../models/user.model';
+import { VALIDATION_MESSAGES } from 'base/constants/validationMessages';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -72,6 +77,15 @@ export class UserService implements IUserService {
   }
 
   async updateUser(id: number, dto: UpdateUserDto): Promise<UserModel> {
+    const existingUser = await this.userRepository.findByNickname(
+      dto.nickname.trim(),
+      id,
+    );
+    if (existingUser) {
+      throw new BadRequestException(
+        VALIDATION_MESSAGES.NICKNAME_ALREADY_EXISTS,
+      );
+    }
     const updated = await this.userRepository.update(id, dto);
     if (!updated) throw new NotFoundException('Пользователь не найден');
     return updated;

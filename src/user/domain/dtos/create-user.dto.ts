@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   Validate,
@@ -9,6 +10,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { VALIDATION_MESSAGES } from 'base/constants/validationMessages';
 import { EmailUniqueValidator } from '../validators/email-unique.validator';
 import { NicknameUniqueValidator } from '../validators/nickname-unique.validator';
+import { ExistAvatarIdValidator } from '../validators/exist-avatar-id';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -55,5 +57,15 @@ export class CreateUserDto {
   })
   @IsString({ message: VALIDATION_MESSAGES.IS_STRING })
   @IsOptional()
-  description?: string;
+  description: string;
+
+  @ApiPropertyOptional({
+    example: 1,
+    description: 'ID аватара пользователя',
+    required: false,
+  })
+  @IsNumber()
+  @IsOptional()
+  @Validate(ExistAvatarIdValidator)
+  avatarId: number;
 }
