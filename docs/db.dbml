@@ -60,8 +60,8 @@ Table comments [note: 'Комментарии'] {
 
 Table feeds [note: 'Подписки'] {
   id int [pk, note: 'ИД']
-  followerId int [note: 'ИД пользователя', ref: > users.id]
-  followedId int [note: 'ИД подписчика', ref: > users.id]
+  followerId int [note: 'Идентификатор подписчика (того, кто подписывается)', ref: > users.id]
+  followedId int [note: 'Id пользователя, на которого подписываются', ref: > users.id]
   createTime datetime [note: 'Дата лайка']
   indexes {
     (followerId, followedId) [unique]

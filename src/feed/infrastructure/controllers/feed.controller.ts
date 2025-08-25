@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FeedModel } from '../../domain/models/feed.model';
-import { CurrentUser } from '../../../user/infrastructure/decorators/current-user.decorator';
-import { UserModel } from '../../../user/domain/models/user.model';
-import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
+import { CurrentUser } from 'user/infrastructure/decorators/current-user.decorator';
+import { UserModel } from 'user/domain/models/user.model';
+import { JwtAuthGuard } from 'auth/infrastructure/guards/jwt-auth.guard';
 
 @ApiTags('Подписки')
 @Controller('feeds')
@@ -21,7 +21,7 @@ export class FeedController {
   @Post(':followedId')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Подписаться на пользователя' })
-  @ApiResponse({ type: FeedModel })
+  @ApiResponse({ status: 201, type: FeedModel })
   async follow(
     @CurrentUser() user: UserModel,
     @Param('followedId', ParseIntPipe) followedId: number,
@@ -32,6 +32,7 @@ export class FeedController {
   @Delete(':followedId')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Отписаться от пользователя' })
+  @ApiResponse({ status: 204, description: 'Отписка выполнена' })
   async unfollow(
     @CurrentUser() user: UserModel,
     @Param('followedId', ParseIntPipe) followedId: number,

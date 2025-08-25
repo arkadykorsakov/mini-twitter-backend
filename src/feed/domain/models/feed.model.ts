@@ -7,11 +7,11 @@ export class FeedModel implements Feed {
   })
   id: number;
   @ApiProperty({
-    description: 'Id пользователя, на которого подписываются',
+    description: 'Id подписчика (того, кто подписывается)',
   })
   followerId: number;
   @ApiProperty({
-    description: 'Id подписчика',
+    description: 'Id пользователя, на которого подписываются',
   })
   followedId: number;
   @ApiProperty({
