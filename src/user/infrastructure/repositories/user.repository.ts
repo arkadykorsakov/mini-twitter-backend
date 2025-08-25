@@ -7,7 +7,7 @@ import { UserModel } from '../../domain/models/user.model';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async searchWithQuery(
     where: Prisma.UserWhereInput,
@@ -15,7 +15,7 @@ export class UserRepository implements IUserRepository {
     limit: number,
   ): Promise<SearchResultDto<UserModel>> {
     const [items, total] = await Promise.all([
-      this.prisma.user.findMany({
+      this.prismaService.user.findMany({
         skip: (page - 1) * limit,
         take: limit,
         where,
@@ -23,14 +23,14 @@ export class UserRepository implements IUserRepository {
           passwordHash: true,
         },
       }),
-      this.prisma.user.count({ where }),
+      this.prismaService.user.count({ where }),
     ]);
 
     return { items, total };
   }
 
   async findById(id: number, isArchive = false): Promise<UserModel | null> {
-    return this.prisma.user.findFirst({
+    return this.prismaService.user.findFirst({
       where: { id, ...(isArchive ? {} : { isArchive: false }) },
       omit: {
         passwordHash: true,
@@ -42,7 +42,7 @@ export class UserRepository implements IUserRepository {
     email: string,
     excludeId?: number,
   ): Promise<UserModel | null> {
-    return this.prisma.user.findFirst({
+    return this.prismaService.user.findFirst({
       where: {
         email,
         NOT: excludeId ? { id: excludeId } : undefined,
@@ -57,7 +57,7 @@ export class UserRepository implements IUserRepository {
     nickname: string,
     excludeId?: number,
   ): Promise<UserModel | null> {
-    return this.prisma.user.findFirst({
+    return this.prismaService.user.findFirst({
       where: {
         nickname,
         NOT: excludeId ? { id: excludeId } : undefined,
@@ -69,7 +69,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async create(data: Prisma.UserCreateInput): Promise<UserModel> {
-    return this.prisma.user.create({
+    return this.prismaService.user.create({
       data,
       omit: {
         passwordHash: true,
@@ -82,7 +82,7 @@ export class UserRepository implements IUserRepository {
     data: Prisma.UserUpdateInput,
   ): Promise<UserModel | null> {
     try {
-      return await this.prisma.user.update({
+      return await this.prismaService.user.update({
         where: { id },
         data,
         omit: {
@@ -95,7 +95,7 @@ export class UserRepository implements IUserRepository {
   }
 
   findByEmailWithoutPassword(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
+    return this.prismaService.user.findUnique({
       where: {
         email,
       },

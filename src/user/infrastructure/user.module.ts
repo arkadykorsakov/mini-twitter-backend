@@ -6,7 +6,7 @@ import { UserRepository } from './repositories/user.repository';
 import { EmailUniqueValidator } from '../domain/validators/email-unique.validator';
 import { NicknameUniqueValidator } from '../domain/validators/nickname-unique.validator';
 import { FileModule } from '../../file/infrastructure/file.module';
-import { ExistAvatarIdValidator } from '../domain/validators/exist-avatar-id';
+import { ExistAvatarIdValidator } from '../domain/validators/exist-avatar';
 
 @Module({
   imports: [FileModule],
@@ -19,5 +19,6 @@ import { ExistAvatarIdValidator } from '../domain/validators/exist-avatar-id';
     NicknameUniqueValidator,
     ExistAvatarIdValidator,
   ],
+  exports: [UserService],
 })
 export class UserModule {}

@@ -10,6 +10,7 @@ import { Express } from 'express';
 import {
   ApiConsumes,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -62,6 +63,7 @@ export class FileController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Получение файла по id' })
+  @ApiParam({ type: 'number', name: 'id' })
   @ApiResponse({
     type: FileModel,
   })

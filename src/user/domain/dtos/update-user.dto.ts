@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { VALIDATION_MESSAGES } from 'base/constants/validationMessages';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ExistAvatarIdValidator } from '../validators/exist-avatar-id';
+import { ExistAvatarIdValidator } from '../validators/exist-avatar';
 
 export class UpdateUserDto {
   @ApiProperty({ example: 'Иван', description: 'Имя пользователя' })
