@@ -2,6 +2,8 @@ import { FeedService } from '../../domain/services/feed.service';
 import {
   Controller,
   Delete,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -29,6 +31,7 @@ export class FeedController {
     return this.feedService.follow(user.id, followedId);
   }
 
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':followedId')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Отписаться от пользователя' })
