@@ -10,7 +10,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { VALIDATION_MESSAGES } from 'base/constants/validationMessages';
 import { EmailUniqueValidator } from '../validators/email-unique.validator';
 import { NicknameUniqueValidator } from '../validators/nickname-unique.validator';
-import { ExistAvatarIdValidator } from '../validators/exist-avatar-id';
+import { ExistAvatarIdValidator } from '../validators/exist-avatar';
 
 export class CreateUserDto {
   @ApiProperty({

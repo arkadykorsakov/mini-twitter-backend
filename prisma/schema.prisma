@@ -33,6 +33,10 @@ model User {
   avatarId Int?
   avatar   File? @relation(fields: [avatarId], references: [id])
 
+  // подписки
+  followers Feed[] @relation("UserFollowed") // на меня подписаны
+  following Feed[] @relation("UserFollowers") // на кого я подписан
+
   @@map("users")
 }
 
@@ -50,4 +54,20 @@ model File {
   usersAvatar User[]
 
   @@map("files")
+}
+
+model Feed {
+  id         Int @id @default(autoincrement())
+  followerId Int
+  followedId Int
+
+  createTime DateTime @default(now())
+
+  follower User @relation("UserFollowers", fields: [followerId], references: [id])
+  followed User @relation("UserFollowed", fields: [followedId], references: [id])
+
+  @@unique([followedId, followerId])
+  @@index([followerId])
+  @@index([followedId])
+  @@map("feeds")
 }
