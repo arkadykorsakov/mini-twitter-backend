@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { VALIDATION_MESSAGES } from 'base/constants/validationMessages';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ExistAvatarIdValidator } from '../validators/exist-avatar';
+import { ExistImageValidator } from '../../../base/domain/validators/exist-image';
 
 export class UpdateUserDto {
   @ApiProperty({ example: 'Иван', description: 'Имя пользователя' })
@@ -44,6 +44,6 @@ export class UpdateUserDto {
   })
   @IsNumber()
   @IsOptional()
-  @Validate(ExistAvatarIdValidator)
+  @Validate(ExistImageValidator)
   avatarId: number;
 }

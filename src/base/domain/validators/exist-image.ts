@@ -5,9 +5,9 @@ import {
 import { Injectable } from '@nestjs/common';
 import { FileRepository } from 'file/infrastructure/repositories/FileRepository';
 
-@ValidatorConstraint({ name: 'ExistAvatarIdValidator', async: true })
+@ValidatorConstraint({ name: 'ExistImageValidator', async: true })
 @Injectable()
-export class ExistAvatarIdValidator implements ValidatorConstraintInterface {
+export class ExistImageValidator implements ValidatorConstraintInterface {
   constructor(protected readonly fileRepository: FileRepository) {}
 
   async validate(id: number) {

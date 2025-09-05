@@ -31,11 +31,12 @@ model User {
 
   // avatar
   avatarId Int?
-  avatar   File? @relation(fields: [avatarId], references: [id])
+  avatar   File? @relation(fields: [avatarId], references: [id], onDelete: Cascade)
 
   // подписки
   followers Feed[] @relation("UserFollowed") // на меня подписаны
   following Feed[] @relation("UserFollowers") // на кого я подписан
+  Post      Post[]
 
   @@map("users")
 }
@@ -52,6 +53,7 @@ model File {
   createTime   DateTime @default(now())
 
   usersAvatar User[]
+  Post        Post[]
 
   @@map("files")
 }
@@ -70,4 +72,23 @@ model Feed {
   @@index([followerId])
   @@index([followedId])
   @@map("feeds")
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+
+  title String @db.VarChar(255)
+  body  String @db.Text
+
+  imageId Int?
+  image   File? @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id])
+
+  createTime DateTime @default(now())
+  updateTime DateTime @updatedAt()
+
+  @@index([authorId])
+  @@map("posts")
 }
