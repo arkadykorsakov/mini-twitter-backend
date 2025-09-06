@@ -61,15 +61,16 @@ export class PostService implements IPostService {
     id: number,
     dto: PostDto,
   ): Promise<PostModel> {
-    await this.postRepository.findById(id);
-    const updated = await this.postRepository.update(id, dto);
-    if (!updated) throw new NotFoundException('Пост не найден');
-    if (currentUser.id !== updated.authorId) {
+    const existingPost = await this.getPostById(id);
+
+    if (currentUser.id !== existingPost.authorId) {
       throw new ForbiddenException(
         'Недостаточно прав для редактирования поста',
       );
     }
-    return updated;
+
+    const updatedPost = await this.postRepository.update(id, dto);
+    return updatedPost as PostModel;
   }
 
   async deletePost(currentUser: UserModel, id: number): Promise<void> {

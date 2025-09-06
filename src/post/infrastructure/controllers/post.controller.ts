@@ -20,13 +20,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { PostSearchQueryDto } from '../../domain/dtos/post-search-query.dto';
-import { ApiOkSearchResponse } from '../../../base/infrastructure/decorators/ApiOkSearchResponse';
 import { PostModel } from '../../domain/models/post.model';
 import { PostService } from '../../domain/services/post.service';
 import { PostDto } from '../../domain/dtos/post.dto';
-import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
-import { CurrentUser } from '../../../user/infrastructure/decorators/current-user.decorator';
-import { UserModel } from '../../../user/domain/models/user.model';
+import { JwtAuthGuard } from 'auth/infrastructure/guards/jwt-auth.guard';
+import { CurrentUser } from 'user/infrastructure/decorators/current-user.decorator';
+import { UserModel } from 'user/domain/models/user.model';
+import { ApiOkSearchResponse } from 'base/infrastructure/decorators/ApiOkSearchResponse';
 
 @ApiTags('Посты')
 @Controller('posts')
@@ -54,7 +54,6 @@ export class PostController {
     return this.postService.getPostById(id);
   }
 
-  @Post('')
   @ApiOperation({ summary: 'Создание поста' })
   @ApiCreatedResponse({
     type: PostModel,

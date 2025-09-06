@@ -70,8 +70,12 @@ async function main() {
     throw new Error('Не удалось найти пользователей');
   }
 
-  // Удаляем существующие посты чтобы избежать дубликатов
-  await prisma.post.deleteMany({});
+  // Удаляем только посты целевых авторов, чтобы избежать удаления чужих данных
+  await prisma.post.deleteMany({
+    where: {
+      authorId: { in: [ivan.id, anna.id, alex.id] },
+    },
+  });
 
   // Создаем посты
   const postsData = [
