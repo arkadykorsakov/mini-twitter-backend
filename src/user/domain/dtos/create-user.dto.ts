@@ -10,7 +10,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { VALIDATION_MESSAGES } from 'base/constants/validationMessages';
 import { EmailUniqueValidator } from '../validators/email-unique.validator';
 import { NicknameUniqueValidator } from '../validators/nickname-unique.validator';
-import { ExistAvatarIdValidator } from '../validators/exist-avatar';
+import { ExistImageValidator } from '../../../base/domain/validators/exist-image';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -66,6 +66,6 @@ export class CreateUserDto {
   })
   @IsNumber()
   @IsOptional()
-  @Validate(ExistAvatarIdValidator)
+  @Validate(ExistImageValidator)
   avatarId: number;
 }
