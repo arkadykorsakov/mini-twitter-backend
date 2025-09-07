@@ -5,9 +5,12 @@ import { PostDto } from '../dtos/post.dto';
 import { UserModel } from '../../../user/domain/models/user.model';
 
 export interface IPostService {
-  getPosts(dto: PostSearchQueryDto): Promise<SearchResultDto<PostModel>>;
+  getPosts(
+    dto: PostSearchQueryDto,
+    userId: number,
+  ): Promise<SearchResultDto<PostModel>>;
   createPost(currentUser: UserModel, dto: PostDto): Promise<PostModel>;
-  getPostById(id: number): Promise<PostModel>;
+  getPostById(id: number, userId?: number): Promise<PostModel>;
   updatePost(
     currentUser: UserModel,
     id: number,

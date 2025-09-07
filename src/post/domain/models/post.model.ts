@@ -51,4 +51,14 @@ export class PostModel implements Post {
     type: () => UserModel,
   })
   author?: UserModel;
+
+  @ApiPropertyOptional({
+    description: 'Количество лайков поста',
+  })
+  likeCount: number;
+
+  @ApiPropertyOptional({
+    description: 'Пользователь уже лайкнул пост',
+  })
+  isLiked: boolean;
 }

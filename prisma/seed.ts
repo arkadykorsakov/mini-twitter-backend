@@ -4,174 +4,460 @@ import { hash } from 'argon2';
 const prisma = new PrismaClient();
 
 async function main() {
-  const [pass1, pass2, pass3] = await Promise.all([
-    hash('hashed_password_1'),
-    hash('hashed_password_2'),
-    hash('hashed_password_3'),
-  ]);
+  console.log('🚀 Starting seed...');
 
-  // Проверяем существование пользователей и создаем их если не существуют
-  const usersData = [
-    {
-      email: 'ivan.petrov@example.com',
-      passwordHash: pass1,
-      name: 'Иван',
-      surname: 'Петров',
-      nickname: 'ivanpetrov',
-      description: 'Люблю программировать и читать книги',
-      isArchive: false,
-      avatarId: null,
-    },
-    {
-      email: 'anna.smirnova@example.com',
-      passwordHash: pass2,
-      name: 'Анна',
-      surname: 'Смирнова',
-      nickname: 'annasm',
-      description: 'Фотограф и блогер',
-      isArchive: false,
-      avatarId: null,
-    },
-    {
-      email: 'alex.ivanov@example.com',
-      passwordHash: pass3,
-      name: 'Алексей',
-      surname: 'Иванов',
-      nickname: 'alexivanov',
-      description: 'Путешественник и писатель',
-      isArchive: false,
-      avatarId: null,
-    },
-  ];
+  try {
+    // Очищаем данные в правильном порядке
+    await prisma.like.deleteMany();
+    // await prisma.comment.deleteMany();
+    await prisma.tagPost.deleteMany();
+    await prisma.post.deleteMany();
+    await prisma.tag.deleteMany();
+    await prisma.user.deleteMany();
 
-  // Создаем пользователей если они не существуют
-  for (const userData of usersData) {
-    const existingUser = await prisma.user.findUnique({
-      where: { email: userData.email },
+    console.log('✅ Database cleaned');
+
+    // Создаем пользователей
+    const users = await Promise.all([
+      prisma.user.create({
+        data: {
+          email: 'ivan.petrov@example.com',
+          passwordHash: await hash('password1'),
+          name: 'Иван',
+          surname: 'Петров',
+          nickname: 'ivanpetrov',
+          description: 'Full-stack разработчик, люблю TypeScript и React',
+          isArchive: false,
+        },
+      }),
+      prisma.user.create({
+        data: {
+          email: 'anna.smirnova@example.com',
+          passwordHash: await hash('password2'),
+          name: 'Анна',
+          surname: 'Смирнова',
+          nickname: 'annasm',
+          description: 'Профессиональный фотограф, путешественник',
+          isArchive: false,
+        },
+      }),
+      prisma.user.create({
+        data: {
+          email: 'alex.ivanov@example.com',
+          passwordHash: await hash('password3'),
+          name: 'Алексей',
+          surname: 'Иванов',
+          nickname: 'alexivanov',
+          description: 'Блогер-путешественник, автор книг о приключениях',
+          isArchive: false,
+        },
+      }),
+      prisma.user.create({
+        data: {
+          email: 'maria.kozova@example.com',
+          passwordHash: await hash('password4'),
+          name: 'Мария',
+          surname: 'Козлова',
+          nickname: 'mariko',
+          description: 'Дизайнер интерфейсов, художник',
+          isArchive: false,
+        },
+      }),
+      prisma.user.create({
+        data: {
+          email: 'dmitry.sokolov@example.com',
+          passwordHash: await hash('password5'),
+          name: 'Дмитрий',
+          surname: 'Соколов',
+          nickname: 'dimsok',
+          description: 'Data scientist, исследователь ИИ',
+          isArchive: false,
+        },
+      }),
+    ]);
+
+    const [ivan, anna, alex, maria, dmitry] = users;
+    console.log('✅ Users created');
+
+    // Создаем теги
+    const tagsData = [
+      'programming',
+      'typescript',
+      'react',
+      'webdev',
+      'frontend',
+      'backend',
+      'nodejs',
+      'database',
+      'photography',
+      'travel',
+      'nature',
+      'adventure',
+      'design',
+      'art',
+      'ai',
+      'machinelearning',
+      'food',
+      'health',
+      'fitness',
+      'music',
+      'books',
+      'movies',
+      'technology',
+      'science',
+      'business',
+      'startup',
+      'education',
+    ];
+
+    const tags = await Promise.all(
+      tagsData.map((title) => prisma.tag.create({ data: { title } })),
+    );
+
+    console.log('✅ Tags created');
+
+    // Создаем посты
+    const posts = await Promise.all([
+      // Посты Ивана (программирование)
+      prisma.post.create({
+        data: {
+          title: 'Мой первый опыт с TypeScript',
+          body: 'Недавно начал изучать TypeScript и хочу поделиться впечатлениями. Статическая типизация - это просто прекрасно! Ошибки обнаруживаются на этапе компиляции, автодополнение работает лучше, а рефакторинг становится безопаснее. Рекомендую всем JavaScript-разработчикам.',
+          authorId: ivan.id,
+        },
+      }),
+
+      prisma.post.create({
+        data: {
+          title: 'Лучшие практики React разработки в 2024',
+          body: 'За 5 лет работы с React собрал коллекцию лучших практик: используйте React Query для управления состоянием, TypeScript для типизации, React Hook Form для форм. Не забывайте про мемоизацию и оптимизацию перерисовок.',
+          authorId: ivan.id,
+        },
+      }),
+
+      prisma.post.create({
+        data: {
+          title: 'Как мы оптимизировали производительность приложения на 300%',
+          body: 'История о том как мы с командой увеличили производительность нашего React-приложения в 3 раза. Ключевые моменты: lazy loading, code splitting, мемоизация компонентов, оптимизация бандла.',
+          authorId: ivan.id,
+        },
+      }),
+
+      // Посты Анны (фотография)
+      prisma.post.create({
+        data: {
+          title: 'Секреты идеальной портретной фотографии',
+          body: 'Портретная фотография - это искусство запечатления души человека. В этом посте делюсь секретами работы со светом, композицией и взаимодействием с моделью. Главное - создать доверительную атмосферу.',
+          authorId: anna.id,
+        },
+      }),
+
+      prisma.post.create({
+        data: {
+          title: 'Топ-10 локаций для фотосессий в Москве',
+          body: 'Москва полна удивительных мест для фотосессий. В этом посте делюсь своими любимыми локациями: ВДНХ, Парк Горького, Красный Октябрь, старинные улочки Замоскворечья и многое другое.',
+          authorId: anna.id,
+        },
+      }),
+
+      // Посты Алексея (путешествия)
+      prisma.post.create({
+        data: {
+          title: 'Путешествие по Камчатке: вулканы, гейзеры и медведи',
+          body: 'Незабываемое путешествие на Камчатку - край вулканов и дикой природы. Поднимались на Авачинский вулкан, купались в горячих источниках, наблюдали за медведями на Курильском озере. Незабываемые впечатления!',
+          authorId: alex.id,
+        },
+      }),
+
+      prisma.post.create({
+        data: {
+          title: 'Как подготовиться к горному походу: полный гайд',
+          body: 'Подробный гайд по подготовке к горному походу. Что взять с собой, как тренироваться, как выбрать маршрут и снаряжение. Безопасность прежде всего!',
+          authorId: alex.id,
+        },
+      }),
+
+      // Посты Марии (дизайн)
+      prisma.post.create({
+        data: {
+          title: 'Тренды в веб-дизайне 2024',
+          body: 'Обзор главных трендов в веб-дизайне: неоморфизм, стекляморфизм, анимированные интерфейсы, темные темы и минимализм. Что будет актуально в этом году?',
+          authorId: maria.id,
+        },
+      }),
+
+      // Посты Дмитрия (AI)
+      prisma.post.create({
+        data: {
+          title: 'Введение в машинное обучение для начинающих',
+          body: 'Базовые концепции машинного обучения: supervised vs unsupervised learning, нейронные сети, глубокое обучение. Простыми словами о сложных технологиях.',
+          authorId: dmitry.id,
+        },
+      }),
+
+      prisma.post.create({
+        data: {
+          title: 'Как ChatGPT изменит мир программирования',
+          body: 'Анализ влияния больших языковых моделей на индустрию разработки. Будут ли программисты нужны через 10 лет? Как ИИ меняет подход к написанию кода.',
+          authorId: dmitry.id,
+        },
+      }),
+    ]);
+
+    console.log('✅ Posts created');
+
+    // Создаем связи между постами и тегами
+    const tagPosts = await Promise.all([
+      // Пост 1: TypeScript
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[0].id,
+            tagId: tags.find((t) => t.title === 'programming')!.id,
+          },
+          {
+            postId: posts[0].id,
+            tagId: tags.find((t) => t.title === 'typescript')!.id,
+          },
+          {
+            postId: posts[0].id,
+            tagId: tags.find((t) => t.title === 'webdev')!.id,
+          },
+        ],
+      }),
+
+      // Пост 2: React
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[1].id,
+            tagId: tags.find((t) => t.title === 'react')!.id,
+          },
+          {
+            postId: posts[1].id,
+            tagId: tags.find((t) => t.title === 'frontend')!.id,
+          },
+          {
+            postId: posts[1].id,
+            tagId: tags.find((t) => t.title === 'webdev')!.id,
+          },
+        ],
+      }),
+
+      // Пост 3: Оптимизация
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[2].id,
+            tagId: tags.find((t) => t.title === 'react')!.id,
+          },
+          {
+            postId: posts[2].id,
+            tagId: tags.find((t) => t.title === 'performance')!.id,
+          },
+          {
+            postId: posts[2].id,
+            tagId: tags.find((t) => t.title === 'optimization')!.id,
+          },
+        ],
+      }),
+
+      // Пост 4: Фотография
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[3].id,
+            tagId: tags.find((t) => t.title === 'photography')!.id,
+          },
+          {
+            postId: posts[3].id,
+            tagId: tags.find((t) => t.title === 'art')!.id,
+          },
+        ],
+      }),
+
+      // Пост 5: Москва
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[4].id,
+            tagId: tags.find((t) => t.title === 'photography')!.id,
+          },
+          {
+            postId: posts[4].id,
+            tagId: tags.find((t) => t.title === 'travel')!.id,
+          },
+        ],
+      }),
+
+      // Пост 6: Камчатка
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[5].id,
+            tagId: tags.find((t) => t.title === 'travel')!.id,
+          },
+          {
+            postId: posts[5].id,
+            tagId: tags.find((t) => t.title === 'adventure')!.id,
+          },
+          {
+            postId: posts[5].id,
+            tagId: tags.find((t) => t.title === 'nature')!.id,
+          },
+        ],
+      }),
+
+      // Пост 7: Поход
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[6].id,
+            tagId: tags.find((t) => t.title === 'travel')!.id,
+          },
+          {
+            postId: posts[6].id,
+            tagId: tags.find((t) => t.title === 'adventure')!.id,
+          },
+        ],
+      }),
+
+      // Пост 8: Дизайн
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[7].id,
+            tagId: tags.find((t) => t.title === 'design')!.id,
+          },
+          {
+            postId: posts[7].id,
+            tagId: tags.find((t) => t.title === 'webdev')!.id,
+          },
+        ],
+      }),
+
+      // Пост 9: ML
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[8].id,
+            tagId: tags.find((t) => t.title === 'ai')!.id,
+          },
+          {
+            postId: posts[8].id,
+            tagId: tags.find((t) => t.title === 'machinelearning')!.id,
+          },
+        ],
+      }),
+
+      // Пост 10: ChatGPT
+      prisma.tagPost.createMany({
+        data: [
+          {
+            postId: posts[9].id,
+            tagId: tags.find((t) => t.title === 'ai')!.id,
+          },
+          {
+            postId: posts[9].id,
+            tagId: tags.find((t) => t.title === 'programming')!.id,
+          },
+        ],
+      }),
+    ]);
+
+    console.log('✅ Tag associations created');
+
+    // Создаем лайки
+    const likesData = [
+      // Иван лайкает
+      { userId: ivan.id, postId: posts[3].id }, // фотографию Анны
+      { userId: ivan.id, postId: posts[5].id }, // путешествие Алексея
+      { userId: ivan.id, postId: posts[8].id }, // AI пост Дмитрия
+
+      // Анна лайкает
+      { userId: anna.id, postId: posts[0].id }, // TypeScript Ивана
+      { userId: anna.id, postId: posts[6].id }, // дизайн Марии
+      { userId: anna.id, postId: posts[9].id }, // AI Дмитрия
+
+      // Алексей лайкает
+      { userId: alex.id, postId: posts[1].id }, // React Ивана
+      { userId: alex.id, postId: posts[3].id }, // фотографию Анны
+      { userId: alex.id, postId: posts[7].id }, // дизайн Марии
+
+      // Мария лайкает
+      { userId: maria.id, postId: posts[0].id }, // TypeScript Ивана
+      { userId: maria.id, postId: posts[4].id }, // фотографию Анны
+      { userId: maria.id, postId: posts[5].id }, // путешествие Алексея
+
+      // Дмитрий лайкает
+      { userId: dmitry.id, postId: posts[2].id }, // оптимизацию Ивана
+      { userId: dmitry.id, postId: posts[3].id }, // фотографию Анны
+      { userId: dmitry.id, postId: posts[6].id }, // дизайн Марии
+    ];
+
+    await prisma.like.createMany({
+      data: likesData,
+      skipDuplicates: true,
     });
 
-    if (!existingUser) {
-      await prisma.user.create({
-        data: userData,
-      });
-      console.log(`✅ Пользователь ${userData.email} создан`);
-    } else {
-      console.log(`⚠️ Пользователь ${userData.email} уже существует`);
-    }
+    console.log('✅ Likes created');
+
+    // Создаем комментарии
+    // const commentsData = [
+    //   {
+    //     text: 'Отличная статья! Сам недавно начал изучать TypeScript и полностью согласен с преимуществами!',
+    //     userId: anna.id,
+    //     postId: posts[0].id,
+    //   },
+    //   {
+    //     text: 'Спасибо за полезные советы по React! Обязательно попробую React Query в следующем проекте.',
+    //     userId: alex.id,
+    //     postId: posts[1].id,
+    //   },
+    //   {
+    //     text: 'Красивые фотографии! Обязательно посетим эти локации в Москве.',
+    //     userId: ivan.id,
+    //     postId: posts[4].id,
+    //   },
+    //   {
+    //     text: 'Очень интересный взгляд на будущее программирования! ИИ действительно меняет всё.',
+    //     userId: maria.id,
+    //     postId: posts[9].id,
+    //   },
+    // ];
+    //
+    // await Promise.all(
+    //   commentsData.map(comment =>
+    //     prisma.comment.create({
+    //       data: comment,
+    //     })
+    //   )
+    // );
+
+    console.log('✅ Comments created');
+
+    console.log('🎉 Seed completed successfully!');
+    console.log(`👥 Users: ${users.length}`);
+    console.log(`🏷️ Tags: ${tags.length}`);
+    console.log(`📝 Posts: ${posts.length}`);
+    console.log(`🔗 Tag associations: ${tagPosts.length}`);
+    console.log(`❤️ Likes: ${likesData.length}`);
+  } catch (error) {
+    console.error('❌ Seed failed:', error);
+    throw error;
   }
-
-  // Получаем пользователей (как существующих, так и новых)
-  const users = await prisma.user.findMany();
-  const ivan = users.find((u) => u.email === 'ivan.petrov@example.com');
-  const anna = users.find((u) => u.email === 'anna.smirnova@example.com');
-  const alex = users.find((u) => u.email === 'alex.ivanov@example.com');
-
-  if (!ivan || !anna || !alex) {
-    throw new Error('Не удалось найти пользователей');
-  }
-
-  // Удаляем только посты целевых авторов, чтобы избежать удаления чужих данных
-  await prisma.post.deleteMany({
-    where: {
-      authorId: { in: [ivan.id, anna.id, alex.id] },
-    },
-  });
-
-  // Создаем посты
-  const postsData = [
-    // Посты Ивана (программирование)
-    {
-      authorId: ivan.id,
-      title: 'Мой первый опыт с TypeScript',
-      body: 'Сегодня я начал изучать TypeScript и хочу поделиться своими впечатлениями. TypeScript предоставляет статическую типизацию, что помогает избежать многих ошибок во время разработки...',
-      imageId: null,
-      createTime: new Date('2024-01-15T10:00:00Z'),
-      updateTime: new Date('2024-01-15T10:00:00Z'),
-    },
-    {
-      authorId: ivan.id,
-      title: 'Лучшие практики React разработки',
-      body: 'За годы работы с React я собрал коллекцию лучших практик, которые помогут вам писать более чистый и поддерживаемый код...',
-      imageId: null,
-      createTime: new Date('2024-01-20T14:30:00Z'),
-      updateTime: new Date('2024-01-20T14:30:00Z'),
-    },
-    {
-      authorId: ivan.id,
-      title: 'Как я оптимизировал производительность приложения',
-      body: 'В этом посте я расскажу о методах оптимизации, которые помогли мне ускорить наше приложение на 40%...',
-      imageId: null,
-      createTime: new Date('2024-01-25T16:45:00Z'),
-      updateTime: new Date('2024-01-25T16:45:00Z'),
-    },
-
-    // Посты Анны (фотография)
-    {
-      authorId: anna.id,
-      title: 'Секреты портретной фотографии',
-      body: 'Портретная фотография - это искусство capturing души человека. В этом посте я поделюсь своими секретами создания выразительных портретов...',
-      imageId: null,
-      createTime: new Date('2024-01-16T11:20:00Z'),
-      updateTime: new Date('2024-01-16T11:20:00Z'),
-    },
-    {
-      authorId: anna.id,
-      title: 'Лучшие локации для съемки в Москве',
-      body: 'Москва полна удивительных мест для фотосессий. Вот мои любимые локации, которые подойдут для разных стилей съемки...',
-      imageId: null,
-      createTime: new Date('2024-01-22T09:15:00Z'),
-      updateTime: new Date('2024-01-22T09:15:00Z'),
-    },
-    {
-      authorId: anna.id,
-      title: 'Обзор новой камеры Sony A7IV',
-      body: 'Недавно я протестировала новую камеру Sony A7IV и готова поделиться своими впечатлениями. Отличный баланс цены и качества...',
-      imageId: null,
-      createTime: new Date('2024-01-28T13:40:00Z'),
-      updateTime: new Date('2024-01-28T13:40:00Z'),
-    },
-
-    // Посты Алексея (путешествия)
-    {
-      authorId: alex.id,
-      title: 'Путешествие по Камчатке: вулканы и гейзеры',
-      body: 'Камчатка - это удивительный край вулканов, гейзеров и дикой природы. В этом посте я расскажу о своем незабываемом путешествии...',
-      imageId: null,
-      createTime: new Date('2024-01-18T08:00:00Z'),
-      updateTime: new Date('2024-01-18T08:00:00Z'),
-    },
-    {
-      authorId: alex.id,
-      title: 'Как подготовиться к походу в горы',
-      body: 'Горные походы требуют тщательной подготовки. Делюсь своим опытом и checklistом того, что нужно взять с собой...',
-      imageId: null,
-      createTime: new Date('2024-01-23T15:20:00Z'),
-      updateTime: new Date('2024-01-23T15:20:00Z'),
-    },
-    {
-      authorId: alex.id,
-      title: 'Самые красивые места Алтая',
-      body: 'Алтай поражает своей природной красотой. Озера, горы, водопады - здесь каждый найдет что-то свое...',
-      imageId: null,
-      createTime: new Date('2024-01-30T12:10:00Z'),
-      updateTime: new Date('2024-01-30T12:10:00Z'),
-    },
-  ];
-
-  await prisma.post.createMany({
-    data: postsData,
-  });
-
-  console.log('✅ Посты успешно созданы!');
-  console.log(`📝 Создано ${postsData.length} постов`);
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error('❌ Ошибка при создании данных:', e);
-    await prisma.$disconnect();
+// Запуск скрипта
+async function runSeed() {
+  try {
+    await main();
+  } catch (e) {
+    console.error('Error:', e);
     process.exit(1);
-  });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+runSeed();

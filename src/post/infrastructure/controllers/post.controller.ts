@@ -27,11 +27,18 @@ import { JwtAuthGuard } from 'auth/infrastructure/guards/jwt-auth.guard';
 import { CurrentUser } from 'user/infrastructure/decorators/current-user.decorator';
 import { UserModel } from 'user/domain/models/user.model';
 import { ApiOkSearchResponse } from 'base/infrastructure/decorators/ApiOkSearchResponse';
+import { LikePostService } from '../../domain/services/like-post.service';
+import { FeedPostService } from '../../domain/services/feed-post.service';
+import { SearchWithQueryDto } from '../../../base/domain/dtos/search-with-query.dto';
 
 @ApiTags('Посты')
 @Controller('posts')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly likePostService: LikePostService,
+    private readonly feedPostService: FeedPostService,
+  ) {}
 
   @Get('')
   @ApiOperation({ summary: 'Список постов' })
@@ -39,8 +46,28 @@ export class PostController {
     type: PostModel,
   })
   @UseGuards(JwtAuthGuard)
-  getPosts(@Query() dto: PostSearchQueryDto) {
-    return this.postService.getPosts(dto);
+  getPosts(@Query() dto: PostSearchQueryDto, @CurrentUser() user: UserModel) {
+    return this.postService.getPosts(dto, user.id);
+  }
+
+  @ApiOperation({
+    summary:
+      'Лента постов пользователей, на которых подписан текущий пользователь',
+    description:
+      'Возвращает ленту публикаций от авторов, на которых подписан текущий пользователь',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Успешное получение ленты постов',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('my-feed')
+  getFeedPosts(
+    @Query() dto: SearchWithQueryDto,
+    @CurrentUser() user: UserModel,
+  ) {
+    const { page = 1, limit = 10 } = dto;
+    return this.feedPostService.getFeedPosts(user.id, page, limit);
   }
 
   @Get('/:id')
@@ -50,8 +77,11 @@ export class PostController {
     type: PostModel,
   })
   @UseGuards(JwtAuthGuard)
-  getPostById(@Param('id', ParseIntPipe) id: number) {
-    return this.postService.getPostById(id);
+  getPostById(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: UserModel,
+  ) {
+    return this.postService.getPostById(id, user.id);
   }
 
   @ApiOperation({ summary: 'Создание поста' })
@@ -89,5 +119,16 @@ export class PostController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.postService.deletePost(user, id);
+  }
+
+  @ApiOperation({ summary: 'Поставить/убрать лайк' })
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({ status: 200, description: 'Поставлен/убран лайк' })
+  @Post(':id/like')
+  toggleLike(
+    @CurrentUser() user: UserModel,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.likePostService.toggleLikePost(id, user.id);
   }
 }
