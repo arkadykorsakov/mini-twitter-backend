@@ -7,7 +7,7 @@ import { Like } from '@prisma/client';
 export class LikePostRepository implements ILikePostRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findLikePost(postId: number, userId: number, ): Promise<Like | null> {
+  async findLikePost(postId: number, userId: number): Promise<Like | null> {
     return this.prismaService.like.findFirst({
       where: {
         userId,
@@ -17,12 +17,10 @@ export class LikePostRepository implements ILikePostRepository {
   }
 
   async unlikePost(postId: number, userId: number): Promise<void> {
-    await this.prismaService.like.delete({
+    await this.prismaService.like.deleteMany({
       where: {
-        userId_postId: {
-          postId,
-          userId,
-        },
+        postId,
+        userId,
       },
     });
   }

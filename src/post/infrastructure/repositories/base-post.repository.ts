@@ -2,6 +2,10 @@ import { Prisma } from '@prisma/client';
 import { PostModel } from 'post/domain/models/post.model';
 import { PrismaService } from 'base/services/prisma.service';
 
+type PostWithExtras = Prisma.PostGetPayload<{
+  include: ReturnType<BasePostRepository['buildInclude']>;
+}>;
+
 export abstract class BasePostRepository {
   constructor(protected readonly prismaService: PrismaService) {}
 
@@ -9,20 +13,25 @@ export abstract class BasePostRepository {
     return {
       author: true,
       _count: { select: { likes: true } },
-      likes: userId
+      ...(userId
         ? {
-            where: { userId },
-            select: { id: true },
+            likes: {
+              where: { userId },
+              select: { id: true },
+            },
           }
-        : false,
+        : {}),
     };
   }
 
-  protected mapPost(post: any, userId?: number): PostModel {
+  protected mapPost(post: PostWithExtras, userId?: number): PostModel {
+    const likeCount = post?._count?.likes ?? 0;
+    const isLiked =
+      userId && Array.isArray(post.likes) ? post.likes.length > 0 : false;
     return {
       ...post,
-      likeCount: post._count.likes,
-      isLiked: userId ? post.likes.length > 0 : false,
+      likeCount,
+      isLiked,
     };
   }
 
