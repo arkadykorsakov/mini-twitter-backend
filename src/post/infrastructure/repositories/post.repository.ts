@@ -14,19 +14,19 @@ export class PostRepository implements IPostRepository {
     page: number,
     limit: number,
   ): Promise<SearchResultDto<PostModel>> {
-      const [items, total] = await Promise.all([
-        this.prismaService.post.findMany({
-          skip: (page - 1) * limit,
-          take: limit,
-          where,
-          include: {
-            author: true,
-          },
-        }),
-        this.prismaService.post.count({ where }),
-      ]);
+    const [items, total] = await Promise.all([
+      this.prismaService.post.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        where,
+        include: {
+          author: true,
+        },
+      }),
+      this.prismaService.post.count({ where }),
+    ]);
 
-      return { items, total };
+    return { items, total };
   }
 
   async createPost(data: Prisma.PostCreateInput): Promise<PostModel> {
