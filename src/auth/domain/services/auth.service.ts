@@ -21,7 +21,9 @@ export class AuthService implements IAuthService {
   }
 
   async login(dto: LoginDto): Promise<IAuthResult> {
-    const userWithPassword = await this.userService.getUserWithPasswordByEmail(dto.email);
+    const userWithPassword = await this.userService.getUserWithPasswordByEmail(
+      dto.email,
+    );
 
     if (!userWithPassword) {
       throw new ValidationException({ email: ['Неверный логин или пароль'] });

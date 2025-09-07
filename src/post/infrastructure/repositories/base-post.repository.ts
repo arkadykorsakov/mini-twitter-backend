@@ -13,6 +13,7 @@ export abstract class BasePostRepository {
     return {
       author: true,
       _count: { select: { likes: true } },
+      tags: true,
       ...(userId
         ? {
             likes: {
