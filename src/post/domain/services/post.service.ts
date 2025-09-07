@@ -16,7 +16,10 @@ import {
 export class PostService implements IPostService {
   constructor(private readonly postRepository: PostRepository) {}
 
-  getPosts(dto: PostSearchQueryDto): Promise<SearchResultDto<PostModel>> {
+  getPosts(
+    dto: PostSearchQueryDto,
+    userId: number,
+  ): Promise<SearchResultDto<PostModel>> {
     const { query = '', limit = 10, page = 1 } = dto;
     const where: Prisma.PostWhereInput = {};
 
@@ -36,7 +39,7 @@ export class PostService implements IPostService {
       });
     }
 
-    return this.postRepository.searchWithQuery(where, page, limit);
+    return this.postRepository.searchWithQuery(where, page, limit, userId);
   }
 
   createPost(currentUser: UserModel, dto: PostDto): Promise<PostModel> {
@@ -50,8 +53,8 @@ export class PostService implements IPostService {
     });
   }
 
-  async getPostById(id: number): Promise<PostModel> {
-    const post = await this.postRepository.findById(id);
+  async getPostById(id: number, userId?: number): Promise<PostModel> {
+    const post = await this.postRepository.findById(id, userId);
     if (!post) throw new NotFoundException('Пост не найден');
     return post;
   }

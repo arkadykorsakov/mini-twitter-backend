@@ -37,6 +37,7 @@ model User {
   followers Feed[] @relation("UserFollowed") // на меня подписаны
   following Feed[] @relation("UserFollowers") // на кого я подписан
   Post      Post[]
+  Like      Like[]
 
   @@map("users")
 }
@@ -88,7 +89,23 @@ model Post {
 
   createTime DateTime @default(now())
   updateTime DateTime @updatedAt()
+  likes      Like[]
 
   @@index([authorId])
   @@map("posts")
+}
+
+model Like {
+  id         Int      @id @default(autoincrement())
+  postId     Int
+  userId     Int
+  createTime DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([postId])
+  @@index([userId])
+  @@map("likes")
 }

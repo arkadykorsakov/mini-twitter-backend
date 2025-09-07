@@ -7,9 +7,10 @@ export interface IPostRepository {
     where: Prisma.PostWhereInput,
     page: number,
     limit: number,
+    userId: number,
   ): Promise<SearchResultDto<PostModel>>;
   createPost(data: Prisma.PostCreateInput): Promise<PostModel>;
-  findById(id: number): Promise<PostModel | null>;
+  findById(id: number, userId?: number): Promise<PostModel | null>;
   update(id: number, data: Prisma.PostCreateInput): Promise<PostModel | null>;
   delete(id: number): Promise<null>;
 }
