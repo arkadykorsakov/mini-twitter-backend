@@ -9,10 +9,23 @@ type PostWithExtras = Prisma.PostGetPayload<{
 export abstract class BasePostRepository {
   constructor(protected readonly prismaService: PrismaService) {}
 
+  private buildRepliesInclude(depth = 3): Prisma.CommentInclude | undefined {
+    if (depth <= 0) return undefined; // вместо false
+    return {
+      replies: {
+        include: this.buildRepliesInclude(depth - 1),
+      },
+    };
+  }
+
   protected buildInclude(userId?: number) {
     return {
       author: true,
       _count: { select: { likes: true } },
+      comments: {
+        where: { parentCommentId: null },
+        include: this.buildRepliesInclude(10),
+      },
       tags: true,
       ...(userId
         ? {

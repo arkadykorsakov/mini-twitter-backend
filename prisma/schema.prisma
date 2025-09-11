@@ -34,10 +34,11 @@ model User {
   avatar   File? @relation(fields: [avatarId], references: [id], onDelete: Cascade)
 
   // подписки
-  followers Feed[] @relation("UserFollowed") // на меня подписаны
-  following Feed[] @relation("UserFollowers") // на кого я подписан
+  followers Feed[]    @relation("UserFollowed") // на меня подписаны
+  following Feed[]    @relation("UserFollowers") // на кого я подписан
   posts     Post[]
   likes     Like[]
+  Comment   Comment[]
 
   @@map("users")
 }
@@ -90,8 +91,9 @@ model Post {
   createTime DateTime @default(now())
   updateTime DateTime @updatedAt()
 
-  tags  TagPost[]
-  likes Like[]
+  tags     TagPost[]
+  likes    Like[]
+  comments Comment[]
 
   @@index([authorId])
   @@map("posts")
@@ -131,4 +133,24 @@ model TagPost {
   @@index([postId])
   @@index([tagId])
   @@map("tag_posts")
+}
+
+model Comment {
+  id              Int      @id @default(autoincrement())
+  postId          Int
+  userId          Int
+  parentCommentId Int?
+  text            String   @db.Text
+  createTime      DateTime @default(now())
+  updateTime      DateTime @updatedAt()
+
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentComment Comment?  @relation("CommentToParent", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies       Comment[] @relation("CommentToParent")
+
+  @@index([postId])
+  @@index([userId])
+  @@index([parentCommentId])
+  @@map("comments")
 }

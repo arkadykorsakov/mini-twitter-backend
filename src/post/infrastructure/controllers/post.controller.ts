@@ -30,6 +30,8 @@ import { ApiOkSearchResponse } from 'base/infrastructure/decorators/ApiOkSearchR
 import { LikePostService } from '../../domain/services/like-post.service';
 import { FeedPostService } from '../../domain/services/feed-post.service';
 import { SearchWithQueryDto } from '../../../base/domain/dtos/search-with-query.dto';
+import { CommentService } from '../../../comment/domain/services/CommentService';
+import { CreateCommentDto } from '../../../comment/domain/dtos/create-comment.dto';
 
 @ApiTags('Посты')
 @Controller('posts')
@@ -38,6 +40,7 @@ export class PostController {
     private readonly postService: PostService,
     private readonly likePostService: LikePostService,
     private readonly feedPostService: FeedPostService,
+    private readonly commentService: CommentService,
   ) {}
 
   @Get('')
@@ -130,5 +133,23 @@ export class PostController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.likePostService.toggleLikePost(id, user.id);
+  }
+
+  @ApiOperation({ summary: 'Добавить комментарий' })
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({ status: 200, description: 'Добавлен комментарий' })
+  @Post(':id/comment')
+  async addComment(
+    @CurrentUser() user: UserModel,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: CreateCommentDto,
+  ) {
+    await this.commentService.createComment({
+      ...dto,
+      postId: id,
+      userId: user.id,
+    });
+
+    return this.postService.getPostById(id, user.id);
   }
 }

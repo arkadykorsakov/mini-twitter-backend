@@ -1,4 +1,4 @@
-import { Post } from '@prisma/client';
+import { Comment, Post } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserModel } from '../../../user/domain/models/user.model';
 
@@ -61,4 +61,9 @@ export class PostModel implements Post {
     description: 'Пользователь уже лайкнул пост',
   })
   isLiked: boolean;
+
+  @ApiProperty({
+    description: 'Комментариев к посту',
+  })
+  comments: Comment[];
 }

@@ -52,7 +52,6 @@ Table comments [note: 'Комментарии'] {
   userId int [note: 'ИД пользователя', ref: > users.id]
   parentCommentId int [note: 'ИД родительского комментария', ref: > comments.id, null]
   text text [note: 'Комментарий']
-  status varchar(50) [note: 'Статус комментария']
   createTime datetime [note: 'Создан']
   updateTime datetime [note: 'Обновлен']
 }
