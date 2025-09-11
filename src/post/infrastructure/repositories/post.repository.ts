@@ -41,7 +41,6 @@ export class PostRepository
 
     return post ? this.mapPost(post, userId) : null;
   }
-
   async update(
     id: number,
     data: Prisma.PostUpdateInput,

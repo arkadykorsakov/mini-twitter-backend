@@ -5,6 +5,7 @@ import { FileModule } from 'file/infrastructure/file.module';
 import { FeedModule } from 'feed/infrastructure/feed.module';
 import { PostModule } from './post/infrastructure/post.module';
 import { TagModule } from './tag/infrastructure/tag.module';
+import { CommentModule } from './comment/infrastructure/comment.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TagModule } from './tag/infrastructure/tag.module';
     FeedModule,
     PostModule,
     TagModule,
+    CommentModule,
   ],
   controllers: [],
   providers: [],

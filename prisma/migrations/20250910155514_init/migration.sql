@@ -80,6 +80,19 @@ CREATE TABLE "public"."tag_posts" (
     CONSTRAINT "tag_posts_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "public"."comments" (
+    "id" SERIAL NOT NULL,
+    "postId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "parentCommentId" INTEGER,
+    "text" TEXT NOT NULL,
+    "createTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updateTime" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
 
@@ -122,6 +135,15 @@ CREATE INDEX "tag_posts_tagId_idx" ON "public"."tag_posts"("tagId");
 -- CreateIndex
 CREATE UNIQUE INDEX "tag_posts_postId_tagId_key" ON "public"."tag_posts"("postId", "tagId");
 
+-- CreateIndex
+CREATE INDEX "comments_postId_idx" ON "public"."comments"("postId");
+
+-- CreateIndex
+CREATE INDEX "comments_userId_idx" ON "public"."comments"("userId");
+
+-- CreateIndex
+CREATE INDEX "comments_parentCommentId_idx" ON "public"."comments"("parentCommentId");
+
 -- AddForeignKey
 ALTER TABLE "public"."users" ADD CONSTRAINT "users_avatarId_fkey" FOREIGN KEY ("avatarId") REFERENCES "public"."files"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -148,3 +170,12 @@ ALTER TABLE "public"."tag_posts" ADD CONSTRAINT "tag_posts_postId_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "public"."tag_posts" ADD CONSTRAINT "tag_posts_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "public"."tags"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_postId_fkey" FOREIGN KEY ("postId") REFERENCES "public"."posts"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_parentCommentId_fkey" FOREIGN KEY ("parentCommentId") REFERENCES "public"."comments"("id") ON DELETE CASCADE ON UPDATE CASCADE;

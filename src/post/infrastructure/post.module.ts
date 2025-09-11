@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PostRepository } from './repositories/post.repository';
 import { PostService } from '../domain/services/post.service';
 import { PostController } from './controllers/post.controller';
@@ -10,9 +10,10 @@ import { UserModule } from '../../user/infrastructure/user.module';
 import { LikePostRepository } from './repositories/like-post.repository';
 import { FeedPostService } from '../domain/services/feed-post.service';
 import { FeedPostRepository } from './repositories/feed-post.repository';
+import { CommentModule } from '../../comment/infrastructure/comment.module';
 
 @Module({
-  imports: [FileModule, UserModule],
+  imports: [forwardRef(() => CommentModule), FileModule, UserModule],
   controllers: [PostController],
   providers: [
     PostRepository,
@@ -24,5 +25,6 @@ import { FeedPostRepository } from './repositories/feed-post.repository';
     FeedPostService,
     FeedPostRepository,
   ],
+  exports: [PostService, PostRepository],
 })
 export class PostModule {}
