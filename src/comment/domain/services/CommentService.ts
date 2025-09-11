@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ICommentService } from '../interfaces/ICommentService';
 import { CommentRepository } from '../../infrastructure/repositories/CommentRepository';
 import { Comment } from '@prisma/client';
@@ -26,7 +30,7 @@ export class CommentService implements ICommentService {
       throw new NotFoundException('Комментарий не найден');
     }
     if (comment.userId !== currentUserId) {
-      throw new NotFoundException('Вы не можете удалить чужой комментарий');
+      throw new ForbiddenException('Вы не можете удалить чужой комментарий');
     }
     await this.commentRepository.delete(id);
   }
@@ -40,7 +44,7 @@ export class CommentService implements ICommentService {
       throw new NotFoundException('Комментарий не найден');
     }
     if (comment.userId !== currentUserId) {
-      throw new NotFoundException(
+      throw new ForbiddenException(
         'Вы не можете редактировать чужой комментарий',
       );
     }
